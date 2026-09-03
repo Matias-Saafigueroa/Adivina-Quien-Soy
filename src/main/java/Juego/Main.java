@@ -1,4 +1,4 @@
-package org.example;
+package Juego;
 
 import Servicios.Juego;
 

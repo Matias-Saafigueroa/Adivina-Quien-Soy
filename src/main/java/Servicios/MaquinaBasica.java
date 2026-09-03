@@ -1,6 +1,5 @@
 package Servicios;
 
-import DataSystem.GuardarPreguntasMaquinaTXT;
 import Modelos.Personaje;
 
 import java.util.List;
@@ -8,16 +7,12 @@ import java.util.List;
 /**
  * Máquina 1: juega de forma intuitiva. Elige preguntas al azar entre las
  * disponibles y a veces arriesga una adivinanza antes de estar segura, por
- * lo que es la menos acertiva de las dos. Cada pregunta que formula queda
- * registrada en un log para que la Máquina 2 pueda aprovecharlo.
+ * lo que es la menos acertiva de las dos.
  */
 public class MaquinaBasica extends MaquinaJugadora {
 
-    private final GuardarPreguntasMaquinaTXT log;
-
-    public MaquinaBasica(List<Personaje> personajesBase, String archivoLog) {
+    public MaquinaBasica(List<Personaje> personajesBase) {
         super("Máquina 1 (intuitiva)", personajesBase);
-        this.log = new GuardarPreguntasMaquinaTXT(archivoLog);
     }
 
     @Override
@@ -31,9 +26,7 @@ public class MaquinaBasica extends MaquinaJugadora {
     public Pregunta elegirPregunta() {
         List<Pregunta> disponibles = preguntasDisponibles();
         if (disponibles.isEmpty()) return null;
-        Pregunta elegida = disponibles.get(random.nextInt(disponibles.size()));
-        log.registrar(elegida.getClave());
-        return elegida;
+        return disponibles.get(random.nextInt(disponibles.size()));
     }
 
     @Override

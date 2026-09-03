@@ -1,28 +1,35 @@
 package Modelos;
 
 /**
- * Registro acumulado de un usuario en el marcador: cuántas partidas ganó,
- * cuántas perdió (incluye rendiciones), y en la menor cantidad de intentos
- * que logró ganar.
+ * Registro acumulado de un jugador en el marcador: cuántas veces le ganó a
+ * Máquina 1, cuántas veces completó el desafío ganándoles a las dos,
+ * cuántas partidas perdió (incluye rendiciones), y en la menor cantidad de
+ * intentos que logró completar el desafío.
  */
 public class RegistroMarcador {
 
-    private int victorias;
+    private int victoriasMaquina1;
+    private int victoriasCompletas;
     private int derrotas;
     private int mejorIntentos;
 
-    public RegistroMarcador(int victorias, int derrotas, int mejorIntentos) {
-        this.victorias = victorias;
+    public RegistroMarcador(int victoriasMaquina1, int victoriasCompletas, int derrotas, int mejorIntentos) {
+        this.victoriasMaquina1 = victoriasMaquina1;
+        this.victoriasCompletas = victoriasCompletas;
         this.derrotas = derrotas;
         this.mejorIntentos = mejorIntentos;
     }
 
     public static RegistroMarcador vacio() {
-        return new RegistroMarcador(0, 0, Integer.MAX_VALUE);
+        return new RegistroMarcador(0, 0, 0, Integer.MAX_VALUE);
     }
 
-    public void registrarVictoria(int intentos) {
-        victorias++;
+    public void registrarVictoriaMaquina1() {
+        victoriasMaquina1++;
+    }
+
+    public void registrarVictoriaCompleta(int intentos) {
+        victoriasCompletas++;
         if (intentos < mejorIntentos) {
             mejorIntentos = intentos;
         }
@@ -32,8 +39,12 @@ public class RegistroMarcador {
         derrotas++;
     }
 
-    public int getVictorias() {
-        return victorias;
+    public int getVictoriasMaquina1() {
+        return victoriasMaquina1;
+    }
+
+    public int getVictoriasCompletas() {
+        return victoriasCompletas;
     }
 
     public int getDerrotas() {
@@ -44,7 +55,7 @@ public class RegistroMarcador {
         return mejorIntentos;
     }
 
-    public boolean tieneVictorias() {
-        return victorias > 0 && mejorIntentos != Integer.MAX_VALUE;
+    public boolean tieneVictoriasCompletas() {
+        return victoriasCompletas > 0 && mejorIntentos != Integer.MAX_VALUE;
     }
 }

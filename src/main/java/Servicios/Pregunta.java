@@ -7,9 +7,9 @@ import Modelos.Personaje;
 
 /**
  * Una pregunta-filtro: "¿el personaje cumple <filtro> = <valor>?".
- * Es la única forma en la que un jugador puede indagar sobre el personaje
+ * Es la única forma en la que un jugador puede preguntar sobre el personaje
  * secreto del rival: nunca se expone el objeto Personaje elegido, sólo
- * respuestas booleanas a preguntas como esta.
+ * respuestas booleanas a preguntas como estas calvo o no.
  */
 public class Pregunta {
 
@@ -42,7 +42,6 @@ public class Pregunta {
         return "¿Tu personaje " + getClausula() + "?";
     }
 
-    /** La pregunta sin sujeto ("es calvo", "usa lentes"...), para componerla con distintos sujetos. */
     public String getClausula() {
         return switch (filtro) {
             case GENERO -> "es de género " + valor;
@@ -52,7 +51,7 @@ public class Pregunta {
         };
     }
 
-    /** Clave única para no repetir la misma pregunta dos veces en una partida. */
+
     public String getClave() {
         return filtro + "=" + valor;
     }

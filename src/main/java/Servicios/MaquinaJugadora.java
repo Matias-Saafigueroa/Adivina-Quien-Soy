@@ -35,11 +35,13 @@ public abstract class MaquinaJugadora {
         return nombre;
     }
 
-    /** Elige su propio personaje al azar, evitando repetir el del rival. */
-    public void elegirSecreto(Personaje distintoDe) {
+    /** Elige su propio personaje al azar, evitando repetir alguno de los ya elegidos por otros jugadores. */
+    public void elegirSecreto(List<Personaje> excluir) {
         List<Personaje> opciones = new ArrayList<>(personajesBase);
-        if (distintoDe != null) {
-            opciones.removeIf(p -> p.getId() == distintoDe.getId());
+        if (excluir != null) {
+            for (Personaje p : excluir) {
+                opciones.removeIf(o -> o.getId() == p.getId());
+            }
         }
         this.secreto = opciones.get(random.nextInt(opciones.size()));
         this.candidatos = new ArrayList<>(personajesBase);
@@ -68,16 +70,32 @@ public abstract class MaquinaJugadora {
         preguntasHechas.add(pregunta.getClave());
     }
 
+    /**
+     * Preguntas que todavía aportan información nueva. Si de un filtro con N
+     * valores posibles ya se preguntaron N-1, el valor que falta ya se puede
+     * deducir sin gastar un turno, así que se lo excluye también.
+     */
     protected List<Pregunta> preguntasDisponibles() {
         List<Pregunta> todas = new ArrayList<>();
-        for (Genero g : Genero.values()) todas.add(new Pregunta(Filtro.GENERO, g));
-        todas.add(new Pregunta(Filtro.CALVICIE, Boolean.TRUE));
-        todas.add(new Pregunta(Filtro.CALVICIE, Boolean.FALSE));
-        todas.add(new Pregunta(Filtro.LENTES, Boolean.TRUE));
-        todas.add(new Pregunta(Filtro.LENTES, Boolean.FALSE));
-        for (ColorPelo c : ColorPelo.values()) todas.add(new Pregunta(Filtro.COLOR_PELO, c));
-        todas.removeIf(p -> preguntasHechas.contains(p.getClave()));
+        agregarSiAportaInfo(todas, Filtro.GENERO, List.of(Genero.MASCULINO, Genero.FEMENINO));
+        agregarSiAportaInfo(todas, Filtro.CALVICIE, List.of(Boolean.TRUE, Boolean.FALSE));
+        agregarSiAportaInfo(todas, Filtro.LENTES, List.of(Boolean.TRUE, Boolean.FALSE));
+        agregarSiAportaInfo(todas, Filtro.COLOR_PELO, List.of(ColorPelo.COLORADO, ColorPelo.NEGRO, ColorPelo.AMARILLO));
         return todas;
+    }
+
+    private void agregarSiAportaInfo(List<Pregunta> destino, Filtro filtro, List<Object> valoresPosibles) {
+        long yaPreguntados = valoresPosibles.stream()
+                .filter(v -> preguntasHechas.contains(filtro + "=" + v))
+                .count();
+        if (yaPreguntados >= valoresPosibles.size() - 1) {
+            return;
+        }
+        for (Object valor : valoresPosibles) {
+            if (!preguntasHechas.contains(filtro + "=" + valor)) {
+                destino.add(new Pregunta(filtro, valor));
+            }
+        }
     }
 
     /** true si en este turno conviene arriesgar una adivinanza directa. */
