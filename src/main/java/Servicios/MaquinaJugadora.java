@@ -80,7 +80,7 @@ public abstract class MaquinaJugadora {
         agregarSiAportaInfo(todas, Filtro.GENERO, List.of(Genero.MASCULINO, Genero.FEMENINO));
         agregarSiAportaInfo(todas, Filtro.CALVICIE, List.of(Boolean.TRUE, Boolean.FALSE));
         agregarSiAportaInfo(todas, Filtro.LENTES, List.of(Boolean.TRUE, Boolean.FALSE));
-        agregarSiAportaInfo(todas, Filtro.COLOR_PELO, List.of(ColorPelo.COLORADO, ColorPelo.NEGRO, ColorPelo.AMARILLO));
+        agregarSiAportaInfo(todas, Filtro.COLOR_PELO, List.of(ColorPelo.COLORADO, ColorPelo.NEGRO, ColorPelo.AMARILLO, ColorPelo.AZUL));
         return todas;
     }
 
@@ -96,6 +96,32 @@ public abstract class MaquinaJugadora {
                 destino.add(new Pregunta(filtro, valor));
             }
         }
+    }
+
+    /**
+     * Lo que una máquina decide hacer en su turno: preguntar por un filtro o arriesgar
+     * una adivinanza. Si arriesga porque ya no le quedan preguntas útiles (y no porque
+     * esté segura), sinPreguntasUtiles vale true.
+     */
+    public record Jugada(Pregunta pregunta, Personaje adivinanza, boolean sinPreguntasUtiles) {
+        public boolean esAdivinanza() {
+            return adivinanza != null;
+        }
+    }
+
+    /**
+     * Decide qué hace la máquina en su turno. Es común a Partida y a Espectador: cada
+     * una se encarga después de responder la pregunta o de comprobar la adivinanza.
+     */
+    public Jugada decidirJugada() {
+        if (debeArriesgar()) {
+            return new Jugada(null, elegirAdivinanza(), false);
+        }
+        Pregunta pregunta = elegirPregunta();
+        if (pregunta == null) {
+            return new Jugada(null, elegirAdivinanza(), true);
+        }
+        return new Jugada(pregunta, null, false);
     }
 
     /** true si en este turno conviene arriesgar una adivinanza directa. */
