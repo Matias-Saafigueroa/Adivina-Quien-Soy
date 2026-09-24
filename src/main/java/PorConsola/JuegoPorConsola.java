@@ -1,4 +1,4 @@
-package org.example;
+package PorConsola;
 
 import Servicios.Juego;
 

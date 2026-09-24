@@ -1,4 +1,4 @@
-package org.example;
+package PorConsola;
 
 import DataSystem.RepositorioPersonajes;
 import Modelos.Personaje;
